@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modo Realidade // Simulador de Decisão: Fora da Ilusão</title>
+    <meta name="description" content="Simulador educativo de decisão sobre preconceito e violência de gênero no trabalho, estudo e tecnologia. Desperte sua percepção sobre atitudes invisíveis do cotidiano.">
+    <!-- Google Fonts para tipografia cyber e leitura de alta precisão -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,500;0,700;1,400&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="mode-default">
+    <!-- Efeitos Especiais Cyber de Fundo: Grid Neon & Ambient Blur -->
+    <div class="cyber-grid" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="ambient-glow" id="ambientGlow" aria-hidden="true"></div>
+
+    <!-- Container Principal do Sistema -->
+    <div class="system-container">
+        
+        <!-- Barra Superior de Controle do Sistema -->
+        <header class="system-header">
+            <div class="system-brand">
+                <span class="status-dot"></span>
+                <span class="system-title">MODO_REALIDADE v3.5 // SYS.CIEE</span>
+            </div>
+            
+            <div class="system-controls">
+                <button id="docsToggleBtn" class="cyber-btn-sm docs-btn" title="Abrir Documentação do Sistema">
+                    <span class="icon">📖</span> <span class="label">SOBRE O SISTEMA</span>
+                </button>
+                <button id="soundToggle" class="cyber-btn-sm" title="Alternar efeitos sonoros">
+                    <span class="icon">🔊</span> <span id="soundLabel">SOM: LIGADO</span>
+                </button>
+                <div class="perception-meter-mini" title="Indicador em tempo real do nível de consciência">
+                    <span class="meter-label">PERCEPÇÃO REAL:</span>
+                    <span id="headerPerceptionVal" class="meter-value">0%</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- TELA 1: TELA INICIAL / TERMINAL DE BOOT -->
+        <section id="bootScreen" class="screen active">
+            <div class="cyber-card intro-card">
+                <div class="card-header-bar">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="card-title-code">DIAGNOSTICO_SISTEMA_V3.5.EXE</span>
+                </div>
+                
+                <div class="intro-body">
+                    <div class="glitch-title-wrapper">
+                        <h1 class="main-title">MODO REALIDADE</h1>
+                        <p class="subtitle">SIMULADOR DE DECISÃO: FORA DA ILUSÃO</p>
+                    </div>
+
+                    <div class="terminal-log">
+                        <p class="log-line typing-text" id="typewriterTarget">
+                            > Inicializando matriz de análise comportamental no ambiente profissional e acadêmico...
+                        </p>
+                    </div>
+
+                    <div class="intro-text">
+                        <p>
+                            Nem todo preconceito se manifesta de forma explícita. No cotidiano de estudos, escritórios e empresas de tecnologia, o <strong>machismo e a misoginia</strong> frequentemente se escondem em pequenas frases, interrupções "sutis", tarefas desproporcionais e desvalorização invisível da mulher.
+                        </p>
+                        <p>
+                            Suas escolhas no simulador alterarão o estado do ambiente e a frequência do sistema:
+                        </p>
+                        <ul class="intro-rules-list">
+                            <li><span class="badge-blue">🟦 SISTEMA AZUL (ILUSÃO)</span> : Respostas que ignoram, silenciam ou naturalizam o preconceito mantêm você na <strong>ILUSÃO DA NORMALIDADE</strong>.</li>
+                            <li><span class="badge-red">🟥 SISTEMA VERMELHO (REALIDADE)</span> : Escolhas conscientes, interventoras e de equidade revelam a <strong>REALIDADE CONSCIENTE</strong>.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Seletor do Modo de Diagnóstico -->
+                    <div class="mode-selector-wrapper">
+                        <span class="selector-label">SELEÇÃO DE PROFUNDIDADE DO DIAGNÓSTICO:</span>
+                        <div class="mode-options-grid">
+                            <button class="mode-btn" data-count="5">
+                                <span class="mode-title">⚡ DIAGNÓSTICO RÁPIDO</span>
+                                <span class="mode-desc">5 Situações Interativas</span>
+                            </button>
+                            <button class="mode-btn active" data-count="8">
+                                <span class="mode-title">🎯 DIAGNÓSTICO PADRÃO</span>
+                                <span class="mode-desc">8 Situações Interativas</span>
+                            </button>
+                            <button class="mode-btn" data-count="10">
+                                <span class="mode-title">🔮 DIAGNÓSTICO COMPLETO</span>
+                                <span class="mode-desc">10 Situações Interativas</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="action-wrapper">
+                        <button id="startBtn" class="cyber-btn primary-btn glow-effect">
+                            [ INICIAR DIAGNÓSTICO SELECIONADO ]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TELA 2: SEQUÊNCIA DE CENÁRIOS INTERATIVOS -->
+        <section id="simulatorScreen" class="screen">
+            <!-- Barra de Progresso Superior Detalhada -->
+            <div class="scenario-progress-bar">
+                <div class="progress-info">
+                    <span id="scenarioTracker" class="tracker-badge">SITUAÇÃO 1 DE 8</span>
+                    <span id="perceptionStatusText" class="perception-badge">NÍVEL DE PERCEPÇÃO ATUAL: 0%</span>
+                </div>
+                <div class="progress-track">
+                    <div id="progressFill" class="progress-fill" style="width: 12.5%;"></div>
+                </div>
+            </div>
+
+            <!-- Card Principal da Situação -->
+            <div class="cyber-card scenario-card" id="scenarioCard">
+                <div class="card-header-bar">
+                    <span class="scenario-tag" id="scenarioCategory">#REUNIÃO_DE_TECH</span>
+                    <span class="scenario-id" id="scenarioIdCode">SIM_CASE_01</span>
+                </div>
+
+                <div class="scenario-body">
+                    <h2 class="scenario-title" id="scenarioTitle">Ideia Desvalorizada na Reunião</h2>
+                    
+                    <div class="context-box">
+                        <span class="context-icon">👁️‍🗨️</span>
+                        <p id="scenarioContext" class="context-text">
+                            Carregando contexto...
+                        </p>
+                    </div>
+
+                    <div class="problem-box">
+                        <span class="problem-label">FALA / ATITUDE EM FOCO:</span>
+                        <p id="scenarioSpeech" class="problem-speech">
+                            Carregando fala problemática...
+                        </p>
+                    </div>
+
+                    <div class="options-container">
+                        <p class="options-instruction">COMO VOCÊ REAGE OU INTERPRETA ESTA SITUAÇÃO?</p>
+                        <div id="optionsList" class="options-grid">
+                            <!-- Inserido dinamicamente via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel / Drawer de Feedback Imediato Refinado -->
+            <div id="feedbackDrawer" class="feedback-drawer hidden" aria-live="polite">
+                <div class="feedback-content">
+                    <div class="feedback-header" id="feedbackHeader">
+                        <span id="feedbackVerdictBadge" class="verdict-badge">SISTEMA ATUALIZADO</span>
+                        <span id="feedbackConceptBadge" class="concept-badge">CONCEITO: MANSPLAINING</span>
+                    </div>
+
+                    <h3 id="feedbackTitle" class="feedback-title">Análise da Decisão</h3>
+                    <p id="feedbackText" class="feedback-description">
+                        Explicação detalhada...
+                    </p>
+
+                    <div class="concept-educational-box">
+                        <div class="concept-educational-header">
+                            <span class="concept-icon">💡</span>
+                            <strong>ENTENDA O CONCEITO ENVOLVIDO:</strong>
+                        </div>
+                        <p id="feedbackConceptExplanation">Explicação do conceito...</p>
+                    </div>
+
+                    <div class="feedback-actions">
+                        <button id="nextScenarioBtn" class="cyber-btn next-btn">
+                            [ AVANÇAR PARA A PRÓXIMA SITUAÇÃO ➔ ]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TELA 3: RELATÓRIO FINAL DE CONSCIÊNCIA -->
+        <section id="resultScreen" class="screen">
+            <div class="cyber-card result-card">
+                <div class="card-header-bar">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="card-title-code">RELATORIO_FINAL_DE_CONSCIENCIA.LOG</span>
+                </div>
+
+                <div class="result-body">
+                    <h2 class="result-main-title">DIAGNÓSTICO COMPLETO DO SISTEMA</h2>
+
+                    <!-- Indicador Circular de Consciência -->
+                    <div class="score-display-wrapper">
+                        <div class="gauge-circle" id="gaugeCircle">
+                            <div class="gauge-inner">
+                                <span id="finalScoreVal" class="score-number">0%</span>
+                                <span class="score-label">CONSCIÊNCIA REAL</span>
+                            </div>
+                        </div>
+                        <div class="verdict-status-box">
+                            <h3 id="finalVerdictTitle" class="verdict-title">CLASSIFICANDO...</h3>
+                            <p id="finalVerdictSubtitle" class="verdict-subtitle">
+                                Análise final do seu nível de percepção sobre machismo e discriminação invisível.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Frase de Impacto com Destaque Especial -->
+                    <div class="impact-quote-box">
+                        <span class="quote-icon">“</span>
+                        <p id="impactQuote" class="quote-text">
+                            "A mudança começa quando paramos de tratar o machismo sutil como algo normal."
+                        </p>
+                        <span class="quote-icon-end">”</span>
+                    </div>
+
+                    <!-- Resumo Elegante dos Conceitos Identificados -->
+                    <div class="concepts-summary">
+                        <h3>MAPA DE CONCEITOS ANALISADOS NESTE DIAGNÓSTICO:</h3>
+                        <div class="concepts-grid" id="conceptsGrid">
+                            <!-- Inserido dinamicamente via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Mensagem Educativa Final Construtiva -->
+                    <div class="final-educational-message">
+                        <h4>🌱 DIRETRIZES DE TRANSFORMAÇÃO NO DIA A DIA (ESTUDO & TRABALHO):</h4>
+                        <ul>
+                            <li><strong>Escute e credite:</strong> Garanta que a autoria de ideias femininas seja reconhecida publicamente sem apropriação.</li>
+                            <li><strong>Intervenha no machismo recreativo:</strong> Não normalize piadas sexistas ou comentários condescendentes sob o pretexto de "humor".</li>
+                            <li><strong>Elimine desvios de função por gênero:</strong> Alterne tarefas administrativas e de suporte de forma igual entre toda a equipe.</li>
+                            <li><strong>Avalie por competência real:</strong> Não reduza o mérito de mulheres a "cotas" ou suposições sobre vida pessoal e maternidade.</li>
+                        </ul>
+                    </div>
+
+                    <div class="result-actions">
+                        <button id="restartBtn" class="cyber-btn primary-btn glow-effect">
+                            [ 🔄 REINICIAR NOVO DIAGNÓSTICO ]
+                        </button>
+                        <button id="copySummaryBtn" class="cyber-btn secondary-btn">
+                            [ 📋 COPIAR SÍNTESE EDUCATIVA ]
+                        </button>
+                        <button id="docsResultBtn" class="cyber-btn secondary-btn">
+                            [ 📜 DOCUMENTAÇÃO DO PROJETO ]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rodapé do Sistema -->
+        <footer class="system-footer">
+            <p>Simulador de Decisão Educativo // Conscientização e Equidade de Gênero // SYS.CIEE v3.5</p>
+        </footer>
+
+    </div>
+
+    <!-- MODAL DE DOCUMENTAÇÃO INTERNA DO SISTEMA -->
+    <div id="docsModal" class="docs-modal-overlay hidden" role="dialog" aria-labelledby="docsModalTitle" aria-modal="true">
+        <div class="cyber-card docs-card">
+            <div class="card-header-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="card-title-code" id="docsModalTitle">SYS_DOC // DOCUMENTACAO_INTERNA_DO_PROJETO.SYS</span>
+                <button id="closeDocsHeaderBtn" class="close-header-btn" title="Fechar documentação">&times;</button>
+            </div>
+
+            <div class="docs-body">
+                <div class="docs-title-wrapper">
+                    <h2 class="docs-main-title">ARQUITETURA & MATRIZ DO SISTEMA</h2>
+                    <p class="docs-subtitle">Documentação autoral embutida no simulador interativo Modo Realidade</p>
+                </div>
+
+                <div class="docs-grid-container">
+                    
+                    <!-- Bloco 1: Visão Geral -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">🌐</span>
+                            <h3>Visão Geral do Projeto</h3>
+                        </div>
+                        <p class="doc-text">
+                            Modo Realidade é um simulador de decisão interativo criado para conscientizar sobre machismo, misoginia e violências invisíveis contra mulheres em contextos de estudo, trabalho e tecnologia. O projeto propõe uma experiência digital em que cada escolha do usuário revela como atitudes aparentemente comuns podem esconder preconceitos naturalizados.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 2: Tema e Justificativa -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">⚖️</span>
+                            <h3>Tema e Justificativa</h3>
+                        </div>
+                        <p class="doc-text">
+                            O projeto aborda o combate à violência de gênero com foco em machismo, misoginia e formas sutis de desvalorização da mulher. A proposta foi construída para mostrar que nem toda violência aparece de forma explícita; muitas vezes ela se manifesta em interrupções constantes, descrédito profissional, piadas naturalizadas, exclusão simbólica e outros comportamentos invisibilizados no cotidiano.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 3: Conceito Criativo -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">💡</span>
+                            <h3>Conceito Criativo</h3>
+                        </div>
+                        <p class="doc-text">
+                            A experiência utiliza a lógica de ilusão versus realidade para representar o processo de perceber ou ignorar o preconceito. A inspiração visual e simbólica dialoga com universos de ficção científica e com a ideia de despertar para aquilo que antes parecia normal. O foco não está na referência cinematográfica em si, mas no uso dessa metáfora para gerar reflexão.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 4: Funcionamento do Simulador -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">⚙️</span>
+                            <h3>Como o Sistema Funciona</h3>
+                        </div>
+                        <p class="doc-text">
+                            O usuário passa por situações interativas baseadas em contextos reais de convivência, estudo e trabalho. Em cada etapa, deve interpretar ou reagir a uma atitude problemática. As escolhas feitas alteram o estado visual do sistema e influenciam o nível de percepção apresentado ao final da experiência.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 5: Significado das Cores -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">🎨</span>
+                            <h3>Leitura do Sistema</h3>
+                        </div>
+                        <p class="doc-text">
+                            Azul representa ilusão, naturalização ou leitura distorcida da situação, quando o preconceito não é reconhecido. Vermelho representa realidade, consciência crítica e identificação do problema. Essas cores funcionam como parte da narrativa visual do sistema e ajudam a reforçar o impacto das decisões do usuário.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 6: Tecnologias e Construção -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">💻</span>
+                            <h3>Estrutura e Desenvolvimento</h3>
+                        </div>
+                        <p class="doc-text">
+                            O projeto foi construído como um site interativo, com foco em acessibilidade visual, clareza da navegação e resposta imediata às escolhas do usuário. A estrutura combina conteúdo educativo, interface temática e lógica de progressão para transformar reflexão em experiência.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 7: Objetivo Educativo -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">🌱</span>
+                            <h3>Objetivo Educativo</h3>
+                        </div>
+                        <p class="doc-text">
+                            O simulador não busca punir o usuário, mas estimular a percepção crítica sobre atitudes que muitas vezes são tratadas como normais. A proposta incentiva empatia, escuta, reconhecimento de padrões de machismo e valorização de ambientes mais respeitosos e igualitários.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 8: Público-Alvo -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">🎯</span>
+                            <h3>Público-Alvo</h3>
+                        </div>
+                        <p class="doc-text">
+                            O projeto foi pensado para jovens, estudantes, aprendizes e público geral, especialmente pessoas inseridas em ambientes educacionais, profissionais e tecnológicos. A linguagem foi construída para ser clara, direta e acessível, sem perder a força da mensagem.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 9: Próximos Passos -->
+                    <article class="doc-block">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">🚀</span>
+                            <h3>Evolução do Projeto</h3>
+                        </div>
+                        <p class="doc-text">
+                            Como continuidade, o projeto pode receber novas situações, melhorias de acessibilidade, publicação online e integração com plataformas de apresentação e portfólio. A proposta também pode ser expandida para ações educativas em escolas, grupos de aprendizagem e ambientes corporativos.
+                        </p>
+                    </article>
+
+                    <!-- Bloco 10: Créditos / Equipe -->
+                    <article class="doc-block full-width">
+                        <div class="doc-block-header">
+                            <span class="doc-icon">👥</span>
+                            <h3>Equipe e Produção</h3>
+                        </div>
+                        <p class="doc-text">
+                            Projeto desenvolvido em grupo como proposta autoral de conscientização digital sobre violência de gênero. O conteúdo, a estrutura narrativa e a curadoria visual foram organizados para criar uma experiência interativa educativa e coerente com o tema.
+                        </p>
+                    </article>
+
+                </div>
+
+                <div class="docs-actions">
+                    <button id="closeDocsBtn" class="cyber-btn primary-btn glow-effect">
+                        [ ✖ FECHAR DOCUMENTAÇÃO DO SISTEMA ]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação Toast -->
+    <div id="toast" class="toast hidden" role="status"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

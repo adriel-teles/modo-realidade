@@ -1,7 +1,8 @@
 /**
- * MODO REALIDADE // SIMULADOR DE DECISÃO: FORA DA ILUSÃO v3.5
+ * MODO REALIDADE // SIMULADOR DE DECISÃO: FORA DA ILUSÃO v3.5 & v3.6
  * Lógica do sistema interativo, suporte a 10 cenários, seletores de profundidade,
- * painel de documentação interna embutido e sintetizador sonoro Web Audio API.
+ * painel de acessibilidade completo (Alto Contraste, Redução de Movimento, Escala Tipográfica,
+ * foco gerenciado e live regions para leitores de tela) e sintetizador sonoro Web Audio API.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -172,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             options: [
                 {
                     key: "A",
-                    text: "Aceitar sem questionar, pensando que mulheres são naturally mais adequadas para funções de secretariado da equipe.",
+                    text: "Aceitar sem questionar, pensando que mulheres são naturalmente mais adequadas para funções de secretariado da equipe.",
                     isReality: false,
                     verdictText: "PERMANÊNCIA NA ILUSÃO",
                     feedback: "Delegar a ata sempre à mulher da equipe reduz sua participação nas decisões estratégicas e reforça papéis de gênero ultrapassados.",
@@ -354,22 +355,38 @@ document.addEventListener('DOMContentLoaded', () => {
     let realityScoreCount = 0;
     let soundEnabled = true;
     let userChoicesHistory = [];
+    let lastActiveTriggerElement = null;
 
-    // DOM Elements
+    // Estado Centralizado do Diagnóstico Final
+    let currentDiagnosisResult = {
+        scorePercentage: 0,
+        realityCount: 0,
+        totalScenarios: 0,
+        verdictTitle: "PERCEPÇÃO EM CONSTRUÇÃO",
+        verdictSubtitle: "Análise final do seu nível de percepção sobre machismo e discriminação invisível.",
+        dominantConcept: "Consciência Ativa",
+        quote: '"Questionar o cotidiano é um exercício contínuo de empatia e responsabilidade social."'
+    };
+
+    // DOM Elements - Telas
     const bootScreen = document.getElementById('bootScreen');
     const simulatorScreen = document.getElementById('simulatorScreen');
     const resultScreen = document.getElementById('resultScreen');
 
+    // DOM Elements - Header & Controles
     const startBtn = document.getElementById('startBtn');
     const soundToggle = document.getElementById('soundToggle');
     const soundLabel = document.getElementById('soundLabel');
     const headerPerceptionVal = document.getElementById('headerPerceptionVal');
+    const a11yAnnouncer = document.getElementById('a11yAnnouncer');
 
+    // DOM Elements - Seletor de Modo & Progresso
     const modeBtns = document.querySelectorAll('.mode-btn');
     const scenarioTracker = document.getElementById('scenarioTracker');
     const perceptionStatusText = document.getElementById('perceptionStatusText');
     const progressFill = document.getElementById('progressFill');
     
+    // DOM Elements - Cenário
     const scenarioCategory = document.getElementById('scenarioCategory');
     const scenarioIdCode = document.getElementById('scenarioIdCode');
     const scenarioTitle = document.getElementById('scenarioTitle');
@@ -377,6 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scenarioSpeech = document.getElementById('scenarioSpeech');
     const optionsList = document.getElementById('optionsList');
 
+    // DOM Elements - Feedback
     const feedbackDrawer = document.getElementById('feedbackDrawer');
     const feedbackVerdictBadge = document.getElementById('feedbackVerdictBadge');
     const feedbackConceptBadge = document.getElementById('feedbackConceptBadge');
@@ -385,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackConceptExplanation = document.getElementById('feedbackConceptExplanation');
     const nextScenarioBtn = document.getElementById('nextScenarioBtn');
 
+    // DOM Elements - Resultado
     const finalScoreVal = document.getElementById('finalScoreVal');
     const gaugeCircle = document.getElementById('gaugeCircle');
     const finalVerdictTitle = document.getElementById('finalVerdictTitle');
@@ -395,36 +414,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const copySummaryBtn = document.getElementById('copySummaryBtn');
     const toast = document.getElementById('toast');
 
-    // Elementos da Documentação Interna (Modal)
+    // DOM Elements - Documentação Interna
     const docsModal = document.getElementById('docsModal');
     const docsToggleBtn = document.getElementById('docsToggleBtn');
     const docsResultBtn = document.getElementById('docsResultBtn');
     const closeDocsBtn = document.getElementById('closeDocsBtn');
     const closeDocsHeaderBtn = document.getElementById('closeDocsHeaderBtn');
 
+    // DOM Elements - Painel de Acessibilidade
+    const a11yModal = document.getElementById('a11yModal');
+    const a11yToggleBtn = document.getElementById('a11yToggleBtn');
+    const closeA11yBtn = document.getElementById('closeA11yBtn');
+    const closeA11yHeaderBtn = document.getElementById('closeA11yHeaderBtn');
+    const highContrastToggle = document.getElementById('highContrastToggle');
+    const highContrastStateText = document.getElementById('highContrastStateText');
+    const reducedMotionToggle = document.getElementById('reducedMotionToggle');
+    const reducedMotionStateText = document.getElementById('reducedMotionStateText');
+    const fontSizeBtns = document.querySelectorAll('.font-size-btn');
+
+    const OFFICIAL_PROJECT_URL = "https://adriel-teles.github.io/modo-realidade/";
+
     /* --------------------------------------------------------------------------
        3. SÍNTESE SONORA WEB AUDIO API
        -------------------------------------------------------------------------- */
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let audioCtx = null;
+
+    function getAudioContext() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        return audioCtx;
+    }
 
     function playSynthBeep(freq, type = 'sine', duration = 0.1, gainVal = 0.15) {
         if (!soundEnabled) return;
         try {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            const ctx = getAudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
             osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
             osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            gain.connect(ctx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + duration);
+            osc.stop(ctx.currentTime + duration);
         } catch (e) {
-            console.warn('AudioContext ready', e);
+            console.warn('AudioContext notice:', e);
         }
     }
 
@@ -449,53 +489,204 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* --------------------------------------------------------------------------
-       4. DOCUMENTAÇÃO INTERNA DO SISTEMA (MODAL MANAGEMENT)
+       4. ANUNCIADOR DE ACESSIBILIDADE & TOAST
        -------------------------------------------------------------------------- */
-    function openDocsModal() {
-        soundClick();
-        docsModal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeDocsModal() {
-        soundClick();
-        docsModal.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
-    docsToggleBtn.addEventListener('click', openDocsModal);
-    if (docsResultBtn) docsResultBtn.addEventListener('click', openDocsModal);
-    closeDocsBtn.addEventListener('click', closeDocsModal);
-    closeDocsHeaderBtn.addEventListener('click', closeDocsModal);
-
-    // Fechar ao clicar fora do card ou pressionar ESC
-    docsModal.addEventListener('click', (e) => {
-        if (e.target === docsModal) {
-            closeDocsModal();
+    function announceToScreenReader(message) {
+        if (a11yAnnouncer) {
+            a11yAnnouncer.textContent = '';
+            setTimeout(() => {
+                a11yAnnouncer.textContent = message;
+            }, 50);
         }
+    }
+
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.remove('hidden');
+        announceToScreenReader(message);
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 3200);
+    }
+
+    /* --------------------------------------------------------------------------
+       5. GERENCIAMENTO DE MODAIS (FOCO, TECLADO E ARIA)
+       -------------------------------------------------------------------------- */
+    function openModal(modalEl, triggerBtn = null) {
+        soundClick();
+        lastActiveTriggerElement = triggerBtn || document.activeElement;
+        modalEl.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        if (triggerBtn) {
+            triggerBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        // Mover foco para o modal
+        const focusable = modalEl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusable.length > 0) {
+            focusable[0].focus();
+        }
+    }
+
+    function closeModal(modalEl) {
+        soundClick();
+        modalEl.classList.add('hidden');
+        document.body.style.overflow = '';
+
+        // Restaurar foco
+        if (lastActiveTriggerElement && typeof lastActiveTriggerElement.focus === 'function') {
+            lastActiveTriggerElement.setAttribute('aria-expanded', 'false');
+            lastActiveTriggerElement.focus();
+        }
+    }
+
+    // Modal Documentação
+    docsToggleBtn.addEventListener('click', () => openModal(docsModal, docsToggleBtn));
+    if (docsResultBtn) docsResultBtn.addEventListener('click', () => openModal(docsModal, docsResultBtn));
+    closeDocsBtn.addEventListener('click', () => closeModal(docsModal));
+    closeDocsHeaderBtn.addEventListener('click', () => closeModal(docsModal));
+
+    // Modal Acessibilidade
+    a11yToggleBtn.addEventListener('click', () => openModal(a11yModal, a11yToggleBtn));
+    closeA11yBtn.addEventListener('click', () => closeModal(a11yModal));
+    closeA11yHeaderBtn.addEventListener('click', () => closeModal(a11yModal));
+
+    // Fechar ao clicar no backdrop (overlay)
+    [docsModal, a11yModal].forEach(modal => {
+        if (!modal) return;
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal(modal);
+            }
+        });
     });
 
+    // Tecla ESC para fechar qualquer modal ativo
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !docsModal.classList.contains('hidden')) {
-            closeDocsModal();
+        if (e.key === 'Escape') {
+            if (!a11yModal.classList.contains('hidden')) {
+                closeModal(a11yModal);
+            } else if (!docsModal.classList.contains('hidden')) {
+                closeModal(docsModal);
+            }
         }
     });
 
     /* --------------------------------------------------------------------------
-       5. CONTROLES E SELETOR DE MODO
+       6. CONFIGURAÇÕES DE ACESSIBILIDADE & LOCALSTORAGE
+       -------------------------------------------------------------------------- */
+    // 6.1 Alto Contraste
+    function setHighContrast(enable, save = true) {
+        if (enable) {
+            document.body.classList.add('high-contrast');
+            highContrastToggle.setAttribute('aria-checked', 'true');
+            highContrastStateText.textContent = "ATIVADO";
+            if (save) localStorage.setItem('mr_high_contrast', 'true');
+            announceToScreenReader("Modo de Alto Contraste ativado.");
+        } else {
+            document.body.classList.remove('high-contrast');
+            highContrastToggle.setAttribute('aria-checked', 'false');
+            highContrastStateText.textContent = "DESATIVADO";
+            if (save) localStorage.setItem('mr_high_contrast', 'false');
+            announceToScreenReader("Modo de Alto Contraste desativado.");
+        }
+    }
+
+    highContrastToggle.addEventListener('click', () => {
+        soundClick();
+        const isCurrentActive = document.body.classList.contains('high-contrast');
+        setHighContrast(!isCurrentActive, true);
+    });
+
+    // 6.2 Redução de Animações
+    function setReducedMotion(enable, save = true) {
+        if (enable) {
+            document.body.classList.add('reduced-motion');
+            reducedMotionToggle.setAttribute('aria-checked', 'true');
+            reducedMotionStateText.textContent = "ATIVADO";
+            if (save) localStorage.setItem('mr_reduced_motion', 'true');
+            announceToScreenReader("Redução de animações ativada.");
+        } else {
+            document.body.classList.remove('reduced-motion');
+            reducedMotionToggle.setAttribute('aria-checked', 'false');
+            reducedMotionStateText.textContent = "DESATIVADO";
+            if (save) localStorage.setItem('mr_reduced_motion', 'false');
+            announceToScreenReader("Redução de animações desativada.");
+        }
+    }
+
+    reducedMotionToggle.addEventListener('click', () => {
+        soundClick();
+        const isCurrentActive = document.body.classList.contains('reduced-motion');
+        setReducedMotion(!isCurrentActive, true);
+    });
+
+    // 6.3 Tamanho da Fonte
+    function setFontSize(size, save = true) {
+        document.documentElement.setAttribute('data-font-size', size);
+        fontSizeBtns.forEach(btn => {
+            const isTarget = btn.getAttribute('data-size') === size;
+            btn.classList.toggle('active', isTarget);
+            btn.setAttribute('aria-pressed', isTarget ? 'true' : 'false');
+        });
+        if (save) localStorage.setItem('mr_font_size', size);
+        const labels = { normal: 'Normal', large: 'Grande', xlarge: 'Muito Grande' };
+        announceToScreenReader(`Tamanho do texto alterado para ${labels[size] || size}.`);
+    }
+
+    fontSizeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            soundClick();
+            const size = btn.getAttribute('data-size');
+            setFontSize(size, true);
+        });
+    });
+
+    // Inicialização das preferências de acessibilidade
+    function initA11yPreferences() {
+        // Alto Contraste
+        const savedContrast = localStorage.getItem('mr_high_contrast');
+        if (savedContrast === 'true') {
+            setHighContrast(true, false);
+        }
+
+        // Redução de Movimento (localStorage ou prefers-reduced-motion do SO)
+        const savedMotion = localStorage.getItem('mr_reduced_motion');
+        const systemPrefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (savedMotion === 'true' || (savedMotion === null && systemPrefersReduced)) {
+            setReducedMotion(true, false);
+        }
+
+        // Tamanho da Fonte
+        const savedFontSize = localStorage.getItem('mr_font_size');
+        if (savedFontSize && ['normal', 'large', 'xlarge'].includes(savedFontSize)) {
+            setFontSize(savedFontSize, false);
+        }
+    }
+    initA11yPreferences();
+
+    /* --------------------------------------------------------------------------
+       7. CONTROLES GERAIS E SELETOR DE MODO
        -------------------------------------------------------------------------- */
     soundToggle.addEventListener('click', () => {
         soundEnabled = !soundEnabled;
         soundLabel.textContent = soundEnabled ? "SOM: LIGADO" : "SOM: DESLIGADO";
+        announceToScreenReader(soundEnabled ? "Efeitos sonoros ativados." : "Efeitos sonoros desligados.");
         if (soundEnabled) soundClick();
     });
 
     modeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             soundClick();
-            modeBtns.forEach(b => b.classList.remove('active'));
+            modeBtns.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-pressed', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
             selectedScenarioLimit = parseInt(btn.getAttribute('data-count'), 10);
+            announceToScreenReader(`Diagnóstico selecionado com ${selectedScenarioLimit} situações.`);
         });
     });
 
@@ -508,7 +699,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* --------------------------------------------------------------------------
-       6. INICIALIZAÇÃO DA SIMULAÇÃO
+       8. INICIALIZAÇÃO DA SIMULAÇÃO
        -------------------------------------------------------------------------- */
     startBtn.addEventListener('click', () => {
         soundClick();
@@ -521,10 +712,11 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePerceptionHeader(0);
         showScreen(simulatorScreen);
         renderScenario(currentScenarioIndex);
+        announceToScreenReader(`Iniciando simulação. Situação 1 de ${activeScenarios.length}: ${activeScenarios[0].title}`);
     });
 
     /* --------------------------------------------------------------------------
-       7. RENDERIZAÇÃO DO CENÁRIO ATUAL
+       9. RENDERIZAÇÃO DO CENÁRIO ATUAL
        -------------------------------------------------------------------------- */
     function renderScenario(index) {
         const scenario = activeScenarios[index];
@@ -532,9 +724,15 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackDrawer.classList.add('hidden');
         feedbackDrawer.className = 'feedback-drawer hidden';
         document.body.className = 'mode-default';
+        if (document.body.classList.contains('high-contrast')) {
+            document.body.classList.add('high-contrast');
+        }
 
         const progressPct = ((index + 1) / activeScenarios.length) * 100;
         progressFill.style.width = `${progressPct}%`;
+        const progressTrack = document.querySelector('.progress-track');
+        if (progressTrack) progressTrack.setAttribute('aria-valuenow', progressPct.toFixed(1));
+
         scenarioTracker.textContent = `SITUAÇÃO ${index + 1} DE ${activeScenarios.length}`;
         
         const runningPct = index > 0 ? Math.round((realityScoreCount / index) * 100) : 0;
@@ -550,22 +748,32 @@ document.addEventListener('DOMContentLoaded', () => {
         scenario.options.forEach((opt) => {
             const btn = document.createElement('button');
             btn.className = 'option-card';
-            btn.setAttribute('tabindex', '0');
+            btn.setAttribute('type', 'button');
+            btn.setAttribute('aria-label', `Alternativa ${opt.key}: ${opt.text}`);
             btn.innerHTML = `
-                <span class="option-key">${opt.key}</span>
+                <span class="option-key" aria-hidden="true">${opt.key}</span>
                 <span class="option-text">${opt.text}</span>
             `;
             btn.addEventListener('click', () => handleOptionSelect(opt, scenario));
             optionsList.appendChild(btn);
         });
+
+        // Foco no título do cenário
+        setTimeout(() => {
+            scenarioTitle.setAttribute('tabindex', '-1');
+            scenarioTitle.focus();
+        }, 100);
     }
 
     /* --------------------------------------------------------------------------
-       8. PROCESSAMENTO DA ESCOLHA E FEEDBACK
+       10. PROCESSAMENTO DA ESCOLHA E FEEDBACK
        -------------------------------------------------------------------------- */
     function handleOptionSelect(option, scenario) {
         const optionBtns = optionsList.querySelectorAll('.option-card');
         optionBtns.forEach(btn => btn.style.pointerEvents = 'none');
+
+        const wasHighContrast = document.body.classList.contains('high-contrast');
+        const wasReducedMotion = document.body.classList.contains('reduced-motion');
 
         if (option.isReality) {
             realityScoreCount++;
@@ -575,6 +783,9 @@ document.addEventListener('DOMContentLoaded', () => {
             soundIllusion();
             document.body.className = 'mode-illusion';
         }
+
+        if (wasHighContrast) document.body.classList.add('high-contrast');
+        if (wasReducedMotion) document.body.classList.add('reduced-motion');
 
         userChoicesHistory.push({
             scenarioId: scenario.id,
@@ -595,18 +806,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* --------------------------------------------------------------------------
-       9. EXIBIÇÃO DO FEEDBACK
+       11. EXIBIÇÃO DO FEEDBACK ACESSÍVEL
        -------------------------------------------------------------------------- */
     function showFeedback(option) {
         feedbackDrawer.classList.remove('hidden');
 
         if (option.isReality) {
             feedbackDrawer.className = 'feedback-drawer reality-verdict';
-            feedbackVerdictBadge.innerHTML = `🟥 PERCEPÇÃO DA REALIDADE`;
+            feedbackVerdictBadge.innerHTML = `🔴 REALIDADE — PERCEPÇÃO DA REALIDADE`;
             feedbackTitle.textContent = "Consciência Ativa: Você identificou e combateu o preconceito invisível.";
         } else {
             feedbackDrawer.className = 'feedback-drawer illusion-verdict';
-            feedbackVerdictBadge.innerHTML = `🟦 PERMANÊNCIA NA ILUSÃO`;
+            feedbackVerdictBadge.innerHTML = `🔵 ILUSÃO — PERMANÊNCIA NA ILUSÃO`;
             feedbackTitle.textContent = "Atenção ao Sistema: A atitude naturaliza o machismo ou se omite.";
         }
 
@@ -615,10 +826,20 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackConceptExplanation.textContent = option.conceptExplanation;
 
         feedbackDrawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Anunciar ao leitor de tela e focar no drawer
+        const speechAnnouncement = option.isReality
+            ? `Percepção da Realidade. Você identificou e combateu o preconceito invisível. Conceito: ${option.concept}. ${option.feedback}`
+            : `Permanência na Ilusão. A atitude naturaliza o machismo ou se omite. Conceito: ${option.concept}. ${option.feedback}`;
+        announceToScreenReader(speechAnnouncement);
+
+        setTimeout(() => {
+            feedbackDrawer.focus();
+        }, 150);
     }
 
     /* --------------------------------------------------------------------------
-       10. NAVEGAÇÃO E CONCLUSÃO
+       12. NAVEGAÇÃO E CONCLUSÃO DO DIAGNÓSTICO
        -------------------------------------------------------------------------- */
     nextScenarioBtn.addEventListener('click', () => {
         soundClick();
@@ -626,38 +847,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (currentScenarioIndex < activeScenarios.length) {
             renderScenario(currentScenarioIndex);
+            announceToScreenReader(`Avançando para Situação ${currentScenarioIndex + 1} de ${activeScenarios.length}: ${activeScenarios[currentScenarioIndex].title}`);
         } else {
             finishSimulation();
         }
     });
 
     /* --------------------------------------------------------------------------
-       11. TELA FINAL DE RESULTADO
+       13. TELA FINAL DE RESULTADO & ESTADO CENTRALIZADO
        -------------------------------------------------------------------------- */
     function finishSimulation() {
         showScreen(resultScreen);
         soundCompletion();
 
+        const wasHighContrast = document.body.classList.contains('high-contrast');
+        const wasReducedMotion = document.body.classList.contains('reduced-motion');
+
         const finalPercentage = Math.round((realityScoreCount / activeScenarios.length) * 100);
         animateScoreGauge(finalPercentage);
 
+        let verdictTitleText = "";
+        let verdictSubtitleText = "";
+        let quoteText = "";
+
         if (finalPercentage >= 80) {
             document.body.className = 'mode-reality';
-            finalVerdictTitle.textContent = "MENTE DESPERTA: PERCEPÇÃO CRÍTICA EXCELENTE";
-            finalVerdictSubtitle.textContent = "Sua percepção está afiada para identificar o machismo invisível e intervir ativamente por equidade.";
-            impactQuote.textContent = '"A verdadeira transformação ocorre quando nos recusamos a achar normal o desrespeito sutil do cotidiano."';
+            verdictTitleText = "MENTE DESPERTA: PERCEPÇÃO CRÍTICA EXCELENTE";
+            verdictSubtitleText = "Sua percepção está afiada para identificar o machismo invisível e intervir ativamente por equidade.";
+            quoteText = '"A verdadeira transformação ocorre quando nos recusamos a achar normal o desrespeito sutil do cotidiano."';
         } else if (finalPercentage >= 50) {
             document.body.className = 'mode-default';
-            finalVerdictTitle.textContent = "PERCEPÇÃO EM CONSTRUÇÃO: ATENÇÃO AOS DETALHES";
-            finalVerdictSubtitle.textContent = "Você percebe várias formas de preconceito, mas ainda deixa passar piadas ou tarefas desproporcionais por hábito.";
-            impactQuote.textContent = '"Questionar o cotidiano é um exercício contínuo de empatia e responsabilidade social."';
+            verdictTitleText = "PERCEPÇÃO EM CONSTRUÇÃO: ATENÇÃO AOS DETALHES";
+            verdictSubtitleText = "Você percebe várias formas de preconceito, mas ainda deixa passar piadas ou tarefas desproporcionais por hábito.";
+            quoteText = '"Questionar o cotidiano é um exercício contínuo de empatia e responsabilidade social."';
         } else {
             document.body.className = 'mode-illusion';
-            finalVerdictTitle.textContent = "DOMINADO PELA ILUSÃO: NECESSIDADE URGENTE DE REFLEXÃO";
-            finalVerdictSubtitle.textContent = "Suas escolhas mantêm a ilusão da normalidade perante falas condescendentes, interrupções e estereótipos.";
-            impactQuote.textContent = '"Sair da ilusão é reconhecer que pequenas frases e atitudes moldam a realidade das pessoas ao nosso redor."';
+            verdictTitleText = "DOMINADO PELA ILUSÃO: NECESSIDADE URGENTE DE REFLEXÃO";
+            verdictSubtitleText = "Suas escolhas mantêm a ilusão da normalidade perante falas condescendentes, interrupções e estereótipos.";
+            quoteText = '"Sair da ilusão é reconhecer que pequenas frases e atitudes moldam a realidade das pessoas ao nosso redor."';
         }
 
+        if (wasHighContrast) document.body.classList.add('high-contrast');
+        if (wasReducedMotion) document.body.classList.add('reduced-motion');
+
+        finalVerdictTitle.textContent = verdictTitleText;
+        finalVerdictSubtitle.textContent = verdictSubtitleText;
+        impactQuote.textContent = quoteText;
+
+        // Determinar o conceito de maior destaque ou domínio
+        let dominantConcept = "Equidade & Percepção Crítica";
+        const realityChoices = userChoicesHistory.filter(c => c.isReality);
+        if (realityChoices.length > 0) {
+            dominantConcept = realityChoices[0].concept;
+        } else if (userChoicesHistory.length > 0) {
+            dominantConcept = userChoicesHistory[0].concept;
+        }
+
+        currentDiagnosisResult = {
+            scorePercentage: finalPercentage,
+            realityCount: realityScoreCount,
+            totalScenarios: activeScenarios.length,
+            verdictTitle: verdictTitleText,
+            verdictSubtitle: verdictSubtitleText,
+            dominantConcept: dominantConcept,
+            quote: quoteText
+        };
+
+        // Renderizar Mapa de Conceitos
         conceptsGrid.innerHTML = '';
         userChoicesHistory.forEach((item, idx) => {
             const card = document.createElement('div');
@@ -669,17 +925,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div style="margin-top: 6px;">
                     <span class="${item.isReality ? 'badge-red' : 'badge-blue'}">
-                        ${item.isReality ? '🟥 REALIDADE' : '🟦 ILUSÃO'}
+                        ${item.isReality ? '🔴 REALIDADE — PERCEPÇÃO DA REALIDADE' : '🔵 ILUSÃO — PERMANÊNCIA NA ILUSÃO'}
                     </span>
                     <span style="font-size: 0.75rem; color: var(--text-secondary); margin-left: 6px;">${item.concept}</span>
                 </div>
             `;
             conceptsGrid.appendChild(card);
         });
+
+        // Foco e anúncio acessível
+        setTimeout(() => {
+            const resultMainTitle = document.getElementById('resultMainTitle');
+            if (resultMainTitle) {
+                resultMainTitle.focus();
+            }
+        }, 200);
+
+        announceToScreenReader(`Diagnóstico Concluído. Nível de Consciência Real: ${finalPercentage}%. Classificação: ${verdictTitleText}.`);
     }
 
     function animateScoreGauge(targetPct) {
         let currentPct = 0;
+        const isReduced = document.body.classList.contains('reduced-motion');
+        
+        if (isReduced) {
+            finalScoreVal.textContent = `${targetPct}%`;
+            const angle = (targetPct / 100) * 360;
+            const color = targetPct >= 60 ? 'var(--accent-reality)' : 'var(--accent-illusion)';
+            gaugeCircle.style.background = `conic-gradient(${color} ${angle}deg, rgba(255,255,255,0.08) ${angle}deg)`;
+            return;
+        }
+
         const interval = setInterval(() => {
             if (currentPct >= targetPct) {
                 currentPct = targetPct;
@@ -696,7 +972,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* --------------------------------------------------------------------------
-       12. AÇÕES DA TELA FINAL
+       14. AÇÕES DA TELA FINAL
        -------------------------------------------------------------------------- */
     restartBtn.addEventListener('click', () => {
         soundClick();
@@ -704,17 +980,25 @@ document.addEventListener('DOMContentLoaded', () => {
         realityScoreCount = 0;
         userChoicesHistory = [];
         updatePerceptionHeader(0);
+        
+        const wasHighContrast = document.body.classList.contains('high-contrast');
+        const wasReducedMotion = document.body.classList.contains('reduced-motion');
         document.body.className = 'mode-default';
+        if (wasHighContrast) document.body.classList.add('high-contrast');
+        if (wasReducedMotion) document.body.classList.add('reduced-motion');
+
         showScreen(bootScreen);
+        announceToScreenReader("Diagnóstico reiniciado. Bem-vindo ao Modo Realidade.");
     });
 
     copySummaryBtn.addEventListener('click', () => {
         soundClick();
-        const finalPercentage = Math.round((realityScoreCount / activeScenarios.length) * 100);
+        const finalPercentage = currentDiagnosisResult.scorePercentage;
         const summaryText = `[ MODO REALIDADE // SIMULADOR DE DECISÃO v3.5 ]
 Diagnóstico Concluído: ${finalPercentage}% de Percepção Crítica da Realidade sobre preconceito e machismo invisível no cotidiano.
-Total de situações analisadas: ${activeScenarios.length} casos.
-Aprenda a identificar Mansplaining, Bropropriating, Gaslighting e estereótipos de gênero no estudo e trabalho!`;
+Total de situações analisadas: ${currentDiagnosisResult.totalScenarios} casos.
+Perfil: ${currentDiagnosisResult.verdictTitle}
+Acesse e faça seu teste: ${OFFICIAL_PROJECT_URL}`;
 
         navigator.clipboard.writeText(summaryText).then(() => {
             showToast("SÍNTESE EDUCATIVA COPIADA PARA A ÁREA DE TRANSFERÊNCIA!");
@@ -722,13 +1006,5 @@ Aprenda a identificar Mansplaining, Bropropriating, Gaslighting e estereótipos 
             console.error("Erro ao copiar", err);
         });
     });
-
-    function showToast(message) {
-        toast.textContent = message;
-        toast.classList.remove('hidden');
-        setTimeout(() => {
-            toast.classList.add('hidden');
-        }, 3200);
-    }
 
 });

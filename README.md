@@ -74,7 +74,7 @@ A mudança entre azul e vermelho faz parte da própria narrativa da experiência
 
 ## 🎮 Experiência interativa
 
-O projeto utiliza elementos de gamificação e interface inspirada em sistemas tecnológicos para transformar o conteúdo educativo em uma experiência interativa.
+O projeto utiliza elementos de gamificação e uma interface inspirada em sistemas tecnológicos para transformar o conteúdo educativo em uma experiência interativa.
 
 A intenção é fazer com que o usuário não apenas leia sobre discriminação, mas se pergunte:
 
@@ -86,7 +86,7 @@ Depois da escolha, o sistema apresenta uma explicação sobre o conceito envolvi
 
 ## 📊 Diagnóstico Final
 
-Ao terminar as situações, o usuário recebe um diagnóstico personalizado contendo informações como:
+Ao terminar as situações, o usuário recebe um diagnóstico contendo informações como:
 
 * **Percentual de Percepção Real**
 * Perfil de percepção
@@ -103,7 +103,7 @@ O objetivo do diagnóstico não é classificar uma pessoa como "boa" ou "má", m
 
 O projeto busca tornar a experiência acessível para diferentes usuários.
 
-Entre os recursos previstos/implementados estão:
+Entre os recursos de acessibilidade estão:
 
 * Alto contraste
 * Redução de animações
@@ -119,53 +119,26 @@ A experiência não deve depender exclusivamente da percepção das cores para t
 
 ---
 
-## 🏅 Badge de Percepção
+## 📱 Acesso em dispositivos móveis
 
-Ao concluir o diagnóstico, o usuário pode gerar um **Badge de Percepção** personalizado contendo informações da experiência realizada.
+O Modo Realidade é uma aplicação web responsiva e pode ser acessado diretamente pelo navegador em:
 
-O Badge pode apresentar:
+* 💻 Computadores
+* 🖥️ Notebooks
+* 📱 Smartphones
+* 📲 Tablets
 
-* Nome ou codinome
-* Percentual de Percepção Real
-* Quantidade de situações analisadas
-* Perfil de percepção
-* Conceito de maior destaque
-* Identidade visual do Modo Realidade
-* QR Code para retornar ao projeto
-
-O objetivo é transformar o resultado individual em uma experiência que também possa ser compartilhada.
-
----
-
-## 📱 QR Code e compartilhamento
-
-O projeto pode ser acessado diretamente por dispositivos móveis.
-
-O QR Code presente no Badge direciona para:
-
-**https://adriel-teles.github.io/modo-realidade/**
-
-Quando suportado pelo navegador, o projeto também pode utilizar o compartilhamento nativo do dispositivo.
-
-Em navegadores sem suporte ao compartilhamento nativo, o usuário pode utilizar alternativas como:
-
-* Download do Badge
-* Cópia do link
-* Cópia da síntese da experiência
+A interface foi desenvolvida para se adaptar a diferentes tamanhos de tela, permitindo que a experiência seja realizada também pelo celular, sem necessidade de instalar um aplicativo.
 
 ---
 
 ## 🛠️ Tecnologias
 
-O projeto foi desenvolvido utilizando tecnologias web nativas:
+O projeto foi desenvolvido utilizando tecnologias web:
 
 * **HTML5**
 * **CSS3**
 * **JavaScript**
-* **HTML5 Canvas**
-* **Web Share API**
-* **Web Clipboard API**
-* **Web Storage API (`localStorage`)**
 * **GitHub Pages**
 
 A proposta é manter a aplicação leve e acessível diretamente pelo navegador, sem necessidade de instalação.
@@ -202,6 +175,8 @@ Lógica das situações, decisões, pontuação, diagnóstico, acessibilidade e 
 ### ▶️ Experiência online
 
 **https://adriel-teles.github.io/modo-realidade/**
+
+O projeto pode ser acessado diretamente pelo navegador, tanto em computadores quanto em dispositivos móveis.
 
 ---
 
@@ -259,7 +234,7 @@ As referências utilizadas para construção e atualização do conteúdo devem 
 
 ---
 
-## 🚀 Projeto para concurso
+## 🏆 Projeto para concurso
 
 O Modo Realidade foi desenvolvido com foco em **educação, conscientização, interatividade e acessibilidade**.
 

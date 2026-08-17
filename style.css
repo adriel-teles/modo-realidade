@@ -1,6 +1,6 @@
 /* ==========================================================================
-   MODO REALIDADE // SIMULADOR DE DECISÃO v3.5
-   Estilo Futurista / Terminal / Interface Cyber & Painel de Documentação
+   MODO REALIDADE // SIMULADOR DE DECISÃO v3.5 & v3.6
+   Estilo Futurista / Terminal / Interface Cyber & Painel de Acessibilidade
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -46,6 +46,25 @@
     --transition-normal: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* --------------------------------------------------------------------------
+   2. ESCALA TIPOGRÁFICA DE ACESSIBILIDADE
+   -------------------------------------------------------------------------- */
+html {
+    font-size: 16px;
+}
+
+html[data-font-size="normal"] {
+    font-size: 16px;
+}
+
+html[data-font-size="large"] {
+    font-size: 18.5px;
+}
+
+html[data-font-size="xlarge"] {
+    font-size: 21px;
+}
+
 /* Modo Dinâmico do Ambiente */
 body.mode-illusion {
     --active-glow-color: var(--accent-illusion);
@@ -58,8 +77,106 @@ body.mode-reality {
 }
 
 /* --------------------------------------------------------------------------
-   2. RESET & EFEITOS DE SEGUNDO PLANO
+   3. MODO DE ALTO CONTRASTE (WCAG AAA)
    -------------------------------------------------------------------------- */
+body.high-contrast {
+    --bg-dark: #000000;
+    --bg-card: #040711;
+    --bg-card-border: #00e5ff;
+    --bg-input: #000000;
+    --text-primary: #ffffff;
+    --text-secondary: #e2e8f0;
+    --text-muted: #cbd5e1;
+    --accent-cyber: #00ff9d;
+    --accent-illusion: #00ffff;
+    --accent-reality: #ff1769;
+}
+
+body.high-contrast .cyber-card,
+body.high-contrast .doc-block,
+body.high-contrast .concept-item-card,
+body.high-contrast .context-box,
+body.high-contrast .problem-box,
+body.high-contrast .feedback-drawer,
+body.high-contrast .score-display-wrapper,
+body.high-contrast .final-educational-message,
+body.high-contrast .a11y-option-item,
+body.high-contrast .a11y-help-box {
+    border-width: 2px !important;
+    background: #060913 !important;
+}
+
+body.high-contrast .cyber-btn {
+    border-width: 2px !important;
+    font-weight: 800 !important;
+}
+
+body.high-contrast .text-secondary,
+body.high-contrast .doc-text,
+body.high-contrast .context-text,
+body.high-contrast .verdict-subtitle,
+body.high-contrast .a11y-option-desc {
+    color: #f1f5f9 !important;
+}
+
+body.high-contrast .scanlines {
+    display: none !important;
+}
+
+body.high-contrast .cyber-grid {
+    opacity: 0.25;
+}
+
+/* --------------------------------------------------------------------------
+   4. MODO REDUÇÃO DE ANIMAÇÕES & PREFERS-REDUCED-MOTION
+   -------------------------------------------------------------------------- */
+body.reduced-motion *,
+body.reduced-motion *::before,
+body.reduced-motion *::after,
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+body.reduced-motion .status-dot {
+    animation: none !important;
+}
+
+body.reduced-motion .ambient-glow {
+    transition: none !important;
+    filter: blur(40px);
+}
+
+body.reduced-motion .typing-text {
+    border-right: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. UTILITÁRIOS & FOCO ACESSÍVEL
+   -------------------------------------------------------------------------- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent-cyber) !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 12px var(--accent-cyber) !important;
+}
+
+/* Reset & Efeitos de Fundo */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -133,7 +250,7 @@ body.mode-reality .ambient-glow {
 }
 
 /* --------------------------------------------------------------------------
-   3. LAYOUT PRINCIPAL
+   6. LAYOUT PRINCIPAL
    -------------------------------------------------------------------------- */
 .system-container {
     position: relative;
@@ -188,7 +305,8 @@ body.mode-reality .ambient-glow {
 .system-controls {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .perception-meter-mini {
@@ -212,6 +330,16 @@ body.mode-reality .ambient-glow {
     font-weight: 700;
 }
 
+.a11y-btn {
+    border-color: var(--accent-cyber);
+    color: var(--accent-cyber);
+}
+
+.a11y-btn:hover {
+    background: rgba(0, 255, 157, 0.15);
+    box-shadow: 0 0 12px rgba(0, 255, 157, 0.3);
+}
+
 .docs-btn {
     border-color: var(--accent-illusion);
     color: var(--accent-illusion);
@@ -223,7 +351,7 @@ body.mode-reality .ambient-glow {
 }
 
 /* --------------------------------------------------------------------------
-   4. CARDS CYBER & GLASSMORPHISM
+   7. CARDS CYBER & GLASSMORPHISM
    -------------------------------------------------------------------------- */
 .cyber-card {
     background: var(--bg-card);
@@ -280,7 +408,7 @@ body.mode-reality .cyber-card {
     font-size: 1.2rem;
     cursor: pointer;
     line-height: 1;
-    padding: 0 4px;
+    padding: 0 6px;
     transition: color var(--transition-fast);
 }
 
@@ -289,7 +417,7 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   5. GERENCIAMENTO DE TELAS (SWITCHER)
+   8. GERENCIAMENTO DE TELAS
    -------------------------------------------------------------------------- */
 .screen {
     display: none;
@@ -305,7 +433,7 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   6. TELA 1: INTRODUÇÃO & SELETOR DE MODO
+   9. TELA 1: INTRODUÇÃO & SELETOR DE MODO
    -------------------------------------------------------------------------- */
 .intro-body {
     padding: 36px 30px;
@@ -459,7 +587,7 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   7. BOTÕES FUTURISTAS CYBER
+   10. BOTÕES FUTURISTAS CYBER
    -------------------------------------------------------------------------- */
 .cyber-btn {
     font-family: var(--font-mono);
@@ -477,6 +605,7 @@ body.mode-reality .cyber-card {
     text-decoration: none;
     text-transform: uppercase;
     letter-spacing: 1px;
+    min-height: 44px;
 }
 
 .primary-btn {
@@ -507,13 +636,17 @@ body.mode-reality .cyber-card {
 .cyber-btn-sm {
     font-family: var(--font-mono);
     font-size: 0.75rem;
-    padding: 6px 12px;
+    padding: 7px 12px;
     background: rgba(0,0,0,0.4);
     border: 1px solid rgba(255,255,255,0.15);
     color: var(--text-secondary);
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all var(--transition-fast);
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .cyber-btn-sm:hover {
@@ -522,7 +655,7 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   8. TELA 2: BARRA DE PROGRESSO & CENÁRIOS INTERATIVOS
+   11. TELA 2: BARRA DE PROGRESSO & CENÁRIOS INTERATIVOS
    -------------------------------------------------------------------------- */
 .scenario-progress-bar {
     margin-bottom: 20px;
@@ -673,6 +806,7 @@ body.mode-reality .cyber-card {
     gap: 14px;
     text-align: left;
     color: var(--text-primary);
+    width: 100%;
 }
 
 .option-card:hover {
@@ -680,11 +814,6 @@ body.mode-reality .cyber-card {
     border-color: var(--accent-illusion);
     transform: translateX(4px);
     box-shadow: 0 4px 15px rgba(0, 229, 255, 0.15);
-}
-
-.option-card:focus-visible {
-    outline: 2px solid var(--accent-illusion);
-    outline-offset: 2px;
 }
 
 .option-key {
@@ -704,7 +833,7 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   9. DRAWER DE FEEDBACK IMEDIATO
+   12. DRAWER DE FEEDBACK IMEDIATO
    -------------------------------------------------------------------------- */
 .feedback-drawer {
     margin-top: 24px;
@@ -834,7 +963,7 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   10. TELA 3: RELATÓRIO FINAL DE CONSCIÊNCIA
+   13. TELA 3: RELATÓRIO FINAL DE CONSCIÊNCIA
    -------------------------------------------------------------------------- */
 .result-body {
     padding: 36px 28px;
@@ -1016,9 +1145,9 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   11. MODAL E SEÇÃO DE DOCUMENTAÇÃO INTERNA DO PROJETO
+   14. MODAIS GENÉRICOS DO SISTEMA
    -------------------------------------------------------------------------- */
-.docs-modal-overlay {
+.system-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1035,12 +1164,250 @@ body.mode-reality .cyber-card {
     transition: opacity 0.35s ease;
 }
 
-.docs-modal-overlay.hidden {
+.system-modal-overlay.hidden {
     display: none;
     opacity: 0;
     pointer-events: none;
 }
 
+/* --------------------------------------------------------------------------
+   15. MODAL DE ACESSIBILIDADE
+   -------------------------------------------------------------------------- */
+.a11y-card {
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--accent-cyber);
+    box-shadow: 0 0 40px rgba(0, 255, 157, 0.25);
+    animation: modalSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.a11y-body {
+    padding: 28px 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.a11y-title-wrapper {
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 16px;
+}
+
+.a11y-main-title {
+    font-family: var(--font-sans);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-shadow: 0 0 12px rgba(0, 255, 157, 0.4);
+}
+
+.a11y-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--accent-cyber);
+    margin-top: 4px;
+}
+
+.a11y-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.a11y-option-item {
+    background: rgba(18, 26, 43, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    transition: all var(--transition-fast);
+}
+
+.a11y-option-item:hover {
+    border-color: rgba(0, 255, 157, 0.3);
+    background: rgba(18, 26, 43, 0.9);
+}
+
+.a11y-option-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.a11y-option-name {
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.a11y-option-desc {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Toggle Switch Cyber */
+.a11y-toggle-btn {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 6px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all var(--transition-fast);
+    min-height: 38px;
+}
+
+.a11y-toggle-btn .toggle-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #64748b;
+    transition: all var(--transition-fast);
+}
+
+.a11y-toggle-btn[aria-checked="true"] {
+    border-color: var(--accent-cyber);
+    background: rgba(0, 255, 157, 0.15);
+    color: var(--accent-cyber);
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.25);
+}
+
+.a11y-toggle-btn[aria-checked="true"] .toggle-indicator {
+    background: var(--accent-cyber);
+    box-shadow: 0 0 10px var(--accent-cyber);
+}
+
+/* Controle de Tamanho de Fonte */
+.font-size-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.font-size-controls {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.font-size-btn {
+    flex: 1;
+    min-width: 100px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: all var(--transition-fast);
+}
+
+.font-size-btn .btn-subtext {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.font-size-btn:hover {
+    border-color: var(--accent-cyber);
+    background: rgba(0, 255, 157, 0.08);
+}
+
+.font-size-btn.active,
+.font-size-btn[aria-pressed="true"] {
+    background: rgba(0, 255, 157, 0.2);
+    border-color: var(--accent-cyber);
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(0, 255, 157, 0.3);
+}
+
+.font-size-btn.active .btn-subtext,
+.font-size-btn[aria-pressed="true"] .btn-subtext {
+    color: var(--accent-cyber);
+    font-weight: 700;
+}
+
+.a11y-help-box {
+    background: rgba(0, 0, 0, 0.45);
+    border-left: 4px solid var(--accent-cyber);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.help-box-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.help-box-header strong {
+    color: var(--accent-cyber);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+}
+
+kbd {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: #ffffff;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+}
+
+.a11y-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   16. MODAL DE DOCUMENTAÇÃO INTERNA DO PROJETO
+   -------------------------------------------------------------------------- */
 .docs-card {
     width: 100%;
     max-width: 960px;
@@ -1050,18 +1417,7 @@ body.mode-reality .cyber-card {
     background: var(--bg-card);
     border: 1px solid var(--accent-illusion);
     box-shadow: 0 0 40px rgba(0, 229, 255, 0.25);
-    animation: docsModalSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes docsModalSlide {
-    from {
-        opacity: 0;
-        transform: scale(0.96) translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+    animation: modalSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .docs-body {
@@ -1073,20 +1429,24 @@ body.mode-reality .cyber-card {
 }
 
 /* Scrollbar estilizada */
-.docs-body::-webkit-scrollbar {
+.docs-body::-webkit-scrollbar,
+.a11y-body::-webkit-scrollbar {
     width: 8px;
 }
 
-.docs-body::-webkit-scrollbar-track {
+.docs-body::-webkit-scrollbar-track,
+.a11y-body::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.4);
 }
 
-.docs-body::-webkit-scrollbar-thumb {
+.docs-body::-webkit-scrollbar-thumb,
+.a11y-body::-webkit-scrollbar-thumb {
     background: rgba(0, 229, 255, 0.3);
     border-radius: 4px;
 }
 
-.docs-body::-webkit-scrollbar-thumb:hover {
+.docs-body::-webkit-scrollbar-thumb:hover,
+.a11y-body::-webkit-scrollbar-thumb:hover {
     background: var(--accent-illusion);
 }
 
@@ -1174,7 +1534,7 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   12. RODAPÉ E TOAST
+   17. RODAPÉ E TOAST
    -------------------------------------------------------------------------- */
 .system-footer {
     text-align: center;
@@ -1207,7 +1567,7 @@ body.mode-reality .cyber-card {
 }
 
 /* --------------------------------------------------------------------------
-   13. ADAPTAÇÃO RESPONSIVA (MOBILE & TABLET)
+   18. ADAPTAÇÃO RESPONSIVA (MOBILE & TABLET)
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
     .system-container {
@@ -1231,7 +1591,7 @@ body.mode-reality .cyber-card {
     .system-controls {
         width: 100%;
         justify-content: space-between;
-        flex-wrap: wrap;
+        gap: 8px;
     }
 
     .mode-options-grid {
@@ -1242,12 +1602,12 @@ body.mode-reality .cyber-card {
         grid-template-columns: 1fr;
     }
 
-    .docs-body {
+    .docs-body, .a11y-body {
         padding: 18px 14px;
     }
 
-    .docs-main-title {
-        font-size: 1.4rem;
+    .docs-main-title, .a11y-main-title {
+        font-size: 1.3rem;
     }
 
     .intro-body, .scenario-body, .result-body {
@@ -1257,6 +1617,7 @@ body.mode-reality .cyber-card {
     .score-display-wrapper {
         flex-direction: column;
         text-align: center;
+        padding: 20px 14px;
     }
 
     .verdict-status-box {

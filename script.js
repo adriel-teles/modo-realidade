@@ -377,6 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('startBtn');
     const soundToggle = document.getElementById('soundToggle');
     const soundLabel = document.getElementById('soundLabel');
+    const headerPerceptionMeter = document.getElementById('headerPerceptionMeter');
     const headerPerceptionVal = document.getElementById('headerPerceptionVal');
     const a11yAnnouncer = document.getElementById('a11yAnnouncer');
 
@@ -710,6 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeScenarios = allScenarios.slice(0, selectedScenarioLimit);
 
         updatePerceptionHeader(0);
+        headerPerceptionMeter.hidden = false;
         showScreen(simulatorScreen);
         renderScenario(currentScenarioIndex);
         announceToScreenReader(`Iniciando simulação. Situação 1 de ${activeScenarios.length}: ${activeScenarios[0].title}`);
@@ -980,6 +982,7 @@ document.addEventListener('DOMContentLoaded', () => {
         realityScoreCount = 0;
         userChoicesHistory = [];
         updatePerceptionHeader(0);
+        headerPerceptionMeter.hidden = true;
         
         const wasHighContrast = document.body.classList.contains('high-contrast');
         const wasReducedMotion = document.body.classList.contains('reduced-motion');

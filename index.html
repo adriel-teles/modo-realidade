@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-font-size="normal">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,240 +17,251 @@
     <div class="scanlines" aria-hidden="true"></div>
     <div class="ambient-glow" id="ambientGlow" aria-hidden="true"></div>
 
+    <!-- Região Live para Anúncios aos Leitores de Tela -->
+    <div id="a11yAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
     <!-- Container Principal do Sistema -->
     <div class="system-container">
         
         <!-- Barra Superior de Controle do Sistema -->
         <header class="system-header">
             <div class="system-brand">
-                <span class="status-dot"></span>
+                <span class="status-dot" aria-hidden="true"></span>
                 <span class="system-title">MODO_REALIDADE v3.5 // SYS.CIEE</span>
             </div>
             
-            <div class="system-controls">
-                <button id="docsToggleBtn" class="cyber-btn-sm docs-btn" title="Abrir Documentação do Sistema">
-                    <span class="icon">📖</span> <span class="label">SOBRE O SISTEMA</span>
+            <nav class="system-controls" aria-label="Controles do Sistema">
+                <button id="a11yToggleBtn" class="cyber-btn-sm a11y-btn" aria-haspopup="dialog" aria-controls="a11yModal" title="Abrir configurações de acessibilidade">
+                    <span class="icon" aria-hidden="true">⚙</span> <span class="label">ACESSIBILIDADE</span>
                 </button>
-                <button id="soundToggle" class="cyber-btn-sm" title="Alternar efeitos sonoros">
-                    <span class="icon">🔊</span> <span id="soundLabel">SOM: LIGADO</span>
+                <button id="docsToggleBtn" class="cyber-btn-sm docs-btn" aria-haspopup="dialog" aria-controls="docsModal" title="Abrir Documentação do Sistema">
+                    <span class="icon" aria-hidden="true">📖</span> <span class="label">SOBRE O SISTEMA</span>
                 </button>
-                <div class="perception-meter-mini" title="Indicador em tempo real do nível de consciência">
+                <button id="soundToggle" class="cyber-btn-sm" title="Alternar efeitos sonoros" aria-label="Alternar efeitos sonoros">
+                    <span class="icon" aria-hidden="true">🔊</span> <span id="soundLabel">SOM: LIGADO</span>
+                </button>
+                <div class="perception-meter-mini" title="Indicador em tempo real do nível de consciência" aria-label="Nível de percepção real atual">
                     <span class="meter-label">PERCEPÇÃO REAL:</span>
                     <span id="headerPerceptionVal" class="meter-value">0%</span>
                 </div>
-            </div>
+            </nav>
         </header>
 
-        <!-- TELA 1: TELA INICIAL / TERMINAL DE BOOT -->
-        <section id="bootScreen" class="screen active">
-            <div class="cyber-card intro-card">
-                <div class="card-header-bar">
-                    <span class="terminal-dot red"></span>
-                    <span class="terminal-dot yellow"></span>
-                    <span class="terminal-dot green"></span>
-                    <span class="card-title-code">DIAGNOSTICO_SISTEMA_V3.5.EXE</span>
-                </div>
-                
-                <div class="intro-body">
-                    <div class="glitch-title-wrapper">
-                        <h1 class="main-title">MODO REALIDADE</h1>
-                        <p class="subtitle">SIMULADOR DE DECISÃO: FORA DA ILUSÃO</p>
+        <!-- CONTEÚDO PRINCIPAL DO SIMULADOR -->
+        <main id="mainContent">
+
+            <!-- TELA 1: TELA INICIAL / TERMINAL DE BOOT -->
+            <section id="bootScreen" class="screen active" aria-labelledby="mainTitle">
+                <div class="cyber-card intro-card">
+                    <div class="card-header-bar">
+                        <span class="terminal-dot red" aria-hidden="true"></span>
+                        <span class="terminal-dot yellow" aria-hidden="true"></span>
+                        <span class="terminal-dot green" aria-hidden="true"></span>
+                        <span class="card-title-code">DIAGNOSTICO_SISTEMA_V3.5.EXE</span>
                     </div>
-
-                    <div class="terminal-log">
-                        <p class="log-line typing-text" id="typewriterTarget">
-                            > Inicializando matriz de análise comportamental no ambiente profissional e acadêmico...
-                        </p>
-                    </div>
-
-                    <div class="intro-text">
-                        <p>
-                            Nem todo preconceito se manifesta de forma explícita. No cotidiano de estudos, escritórios e empresas de tecnologia, o <strong>machismo e a misoginia</strong> frequentemente se escondem em pequenas frases, interrupções "sutis", tarefas desproporcionais e desvalorização invisível da mulher.
-                        </p>
-                        <p>
-                            Suas escolhas no simulador alterarão o estado do ambiente e a frequência do sistema:
-                        </p>
-                        <ul class="intro-rules-list">
-                            <li><span class="badge-blue">🟦 SISTEMA AZUL (ILUSÃO)</span> : Respostas que ignoram, silenciam ou naturalizam o preconceito mantêm você na <strong>ILUSÃO DA NORMALIDADE</strong>.</li>
-                            <li><span class="badge-red">🟥 SISTEMA VERMELHO (REALIDADE)</span> : Escolhas conscientes, interventoras e de equidade revelam a <strong>REALIDADE CONSCIENTE</strong>.</li>
-                        </ul>
-                    </div>
-
-                    <!-- Seletor do Modo de Diagnóstico -->
-                    <div class="mode-selector-wrapper">
-                        <span class="selector-label">SELEÇÃO DE PROFUNDIDADE DO DIAGNÓSTICO:</span>
-                        <div class="mode-options-grid">
-                            <button class="mode-btn" data-count="5">
-                                <span class="mode-title">⚡ DIAGNÓSTICO RÁPIDO</span>
-                                <span class="mode-desc">5 Situações Interativas</span>
-                            </button>
-                            <button class="mode-btn active" data-count="8">
-                                <span class="mode-title">🎯 DIAGNÓSTICO PADRÃO</span>
-                                <span class="mode-desc">8 Situações Interativas</span>
-                            </button>
-                            <button class="mode-btn" data-count="10">
-                                <span class="mode-title">🔮 DIAGNÓSTICO COMPLETO</span>
-                                <span class="mode-desc">10 Situações Interativas</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="action-wrapper">
-                        <button id="startBtn" class="cyber-btn primary-btn glow-effect">
-                            [ INICIAR DIAGNÓSTICO SELECIONADO ]
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TELA 2: SEQUÊNCIA DE CENÁRIOS INTERATIVOS -->
-        <section id="simulatorScreen" class="screen">
-            <!-- Barra de Progresso Superior Detalhada -->
-            <div class="scenario-progress-bar">
-                <div class="progress-info">
-                    <span id="scenarioTracker" class="tracker-badge">SITUAÇÃO 1 DE 8</span>
-                    <span id="perceptionStatusText" class="perception-badge">NÍVEL DE PERCEPÇÃO ATUAL: 0%</span>
-                </div>
-                <div class="progress-track">
-                    <div id="progressFill" class="progress-fill" style="width: 12.5%;"></div>
-                </div>
-            </div>
-
-            <!-- Card Principal da Situação -->
-            <div class="cyber-card scenario-card" id="scenarioCard">
-                <div class="card-header-bar">
-                    <span class="scenario-tag" id="scenarioCategory">#REUNIÃO_DE_TECH</span>
-                    <span class="scenario-id" id="scenarioIdCode">SIM_CASE_01</span>
-                </div>
-
-                <div class="scenario-body">
-                    <h2 class="scenario-title" id="scenarioTitle">Ideia Desvalorizada na Reunião</h2>
                     
-                    <div class="context-box">
-                        <span class="context-icon">👁️‍🗨️</span>
-                        <p id="scenarioContext" class="context-text">
-                            Carregando contexto...
-                        </p>
-                    </div>
-
-                    <div class="problem-box">
-                        <span class="problem-label">FALA / ATITUDE EM FOCO:</span>
-                        <p id="scenarioSpeech" class="problem-speech">
-                            Carregando fala problemática...
-                        </p>
-                    </div>
-
-                    <div class="options-container">
-                        <p class="options-instruction">COMO VOCÊ REAGE OU INTERPRETA ESTA SITUAÇÃO?</p>
-                        <div id="optionsList" class="options-grid">
-                            <!-- Inserido dinamicamente via JS -->
+                    <div class="intro-body">
+                        <div class="glitch-title-wrapper">
+                            <h1 class="main-title" id="mainTitle">MODO REALIDADE</h1>
+                            <p class="subtitle">SIMULADOR DE DECISÃO: FORA DA ILUSÃO</p>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Painel / Drawer de Feedback Imediato Refinado -->
-            <div id="feedbackDrawer" class="feedback-drawer hidden" aria-live="polite">
-                <div class="feedback-content">
-                    <div class="feedback-header" id="feedbackHeader">
-                        <span id="feedbackVerdictBadge" class="verdict-badge">SISTEMA ATUALIZADO</span>
-                        <span id="feedbackConceptBadge" class="concept-badge">CONCEITO: MANSPLAINING</span>
-                    </div>
-
-                    <h3 id="feedbackTitle" class="feedback-title">Análise da Decisão</h3>
-                    <p id="feedbackText" class="feedback-description">
-                        Explicação detalhada...
-                    </p>
-
-                    <div class="concept-educational-box">
-                        <div class="concept-educational-header">
-                            <span class="concept-icon">💡</span>
-                            <strong>ENTENDA O CONCEITO ENVOLVIDO:</strong>
-                        </div>
-                        <p id="feedbackConceptExplanation">Explicação do conceito...</p>
-                    </div>
-
-                    <div class="feedback-actions">
-                        <button id="nextScenarioBtn" class="cyber-btn next-btn">
-                            [ AVANÇAR PARA A PRÓXIMA SITUAÇÃO ➔ ]
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TELA 3: RELATÓRIO FINAL DE CONSCIÊNCIA -->
-        <section id="resultScreen" class="screen">
-            <div class="cyber-card result-card">
-                <div class="card-header-bar">
-                    <span class="terminal-dot red"></span>
-                    <span class="terminal-dot yellow"></span>
-                    <span class="terminal-dot green"></span>
-                    <span class="card-title-code">RELATORIO_FINAL_DE_CONSCIENCIA.LOG</span>
-                </div>
-
-                <div class="result-body">
-                    <h2 class="result-main-title">DIAGNÓSTICO COMPLETO DO SISTEMA</h2>
-
-                    <!-- Indicador Circular de Consciência -->
-                    <div class="score-display-wrapper">
-                        <div class="gauge-circle" id="gaugeCircle">
-                            <div class="gauge-inner">
-                                <span id="finalScoreVal" class="score-number">0%</span>
-                                <span class="score-label">CONSCIÊNCIA REAL</span>
-                            </div>
-                        </div>
-                        <div class="verdict-status-box">
-                            <h3 id="finalVerdictTitle" class="verdict-title">CLASSIFICANDO...</h3>
-                            <p id="finalVerdictSubtitle" class="verdict-subtitle">
-                                Análise final do seu nível de percepção sobre machismo e discriminação invisível.
+                        <div class="terminal-log" role="status" aria-label="Status do Terminal">
+                            <p class="log-line typing-text" id="typewriterTarget">
+                                > Inicializando matriz de análise comportamental no ambiente profissional e acadêmico...
                             </p>
                         </div>
-                    </div>
 
-                    <!-- Frase de Impacto com Destaque Especial -->
-                    <div class="impact-quote-box">
-                        <span class="quote-icon">“</span>
-                        <p id="impactQuote" class="quote-text">
-                            "A mudança começa quando paramos de tratar o machismo sutil como algo normal."
-                        </p>
-                        <span class="quote-icon-end">”</span>
-                    </div>
+                        <div class="intro-text">
+                            <p>
+                                Nem todo preconceito se manifesta de forma explícita. No cotidiano de estudos, escritórios e empresas de tecnologia, o <strong>machismo e a misoginia</strong> frequentemente se escondem em pequenas frases, interrupções "sutis", tarefas desproporcionais e desvalorização invisível da mulher.
+                            </p>
+                            <p>
+                                Suas escolhas no simulador alterarão o estado do ambiente e a frequência do sistema:
+                            </p>
+                            <ul class="intro-rules-list">
+                                <li><span class="badge-blue">🔵 SISTEMA AZUL (ILUSÃO)</span> : Respostas que ignoram, silenciam ou naturalizam o preconceito mantêm você na <strong>ILUSÃO DA NORMALIDADE</strong>.</li>
+                                <li><span class="badge-red">🔴 SISTEMA VERMELHO (REALIDADE)</span> : Escolhas conscientes, interventoras e de equidade revelam a <strong>REALIDADE CONSCIENTE</strong>.</li>
+                            </ul>
+                        </div>
 
-                    <!-- Resumo Elegante dos Conceitos Identificados -->
-                    <div class="concepts-summary">
-                        <h3>MAPA DE CONCEITOS ANALISADOS NESTE DIAGNÓSTICO:</h3>
-                        <div class="concepts-grid" id="conceptsGrid">
-                            <!-- Inserido dinamicamente via JS -->
+                        <!-- Seletor do Modo de Diagnóstico -->
+                        <div class="mode-selector-wrapper" role="group" aria-labelledby="selectorLabel">
+                            <span class="selector-label" id="selectorLabel">SELEÇÃO DE PROFUNDIDADE DO DIAGNÓSTICO:</span>
+                            <div class="mode-options-grid">
+                                <button class="mode-btn" data-count="5" aria-pressed="false">
+                                    <span class="mode-title">⚡ DIAGNÓSTICO RÁPIDO</span>
+                                    <span class="mode-desc">5 Situações Interativas</span>
+                                </button>
+                                <button class="mode-btn active" data-count="8" aria-pressed="true">
+                                    <span class="mode-title">🎯 DIAGNÓSTICO PADRÃO</span>
+                                    <span class="mode-desc">8 Situações Interativas</span>
+                                </button>
+                                <button class="mode-btn" data-count="10" aria-pressed="false">
+                                    <span class="mode-title">🔮 DIAGNÓSTICO COMPLETO</span>
+                                    <span class="mode-desc">10 Situações Interativas</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="action-wrapper">
+                            <button id="startBtn" class="cyber-btn primary-btn glow-effect">
+                                [ INICIAR DIAGNÓSTICO SELECIONADO ]
+                            </button>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <!-- Mensagem Educativa Final Construtiva -->
-                    <div class="final-educational-message">
-                        <h4>🌱 DIRETRIZES DE TRANSFORMAÇÃO NO DIA A DIA (ESTUDO & TRABALHO):</h4>
-                        <ul>
-                            <li><strong>Escute e credite:</strong> Garanta que a autoria de ideias femininas seja reconhecida publicamente sem apropriação.</li>
-                            <li><strong>Intervenha no machismo recreativo:</strong> Não normalize piadas sexistas ou comentários condescendentes sob o pretexto de "humor".</li>
-                            <li><strong>Elimine desvios de função por gênero:</strong> Alterne tarefas administrativas e de suporte de forma igual entre toda a equipe.</li>
-                            <li><strong>Avalie por competência real:</strong> Não reduza o mérito de mulheres a "cotas" ou suposições sobre vida pessoal e maternidade.</li>
-                        </ul>
+            <!-- TELA 2: SEQUÊNCIA DE CENÁRIOS INTERATIVOS -->
+            <section id="simulatorScreen" class="screen" aria-labelledby="scenarioTitle">
+                <!-- Barra de Progresso Superior Detalhada -->
+                <div class="scenario-progress-bar" role="region" aria-label="Progresso do Diagnóstico">
+                    <div class="progress-info">
+                        <span id="scenarioTracker" class="tracker-badge">SITUAÇÃO 1 DE 8</span>
+                        <span id="perceptionStatusText" class="perception-badge">NÍVEL DE PERCEPÇÃO ATUAL: 0%</span>
                     </div>
-
-                    <div class="result-actions">
-                        <button id="restartBtn" class="cyber-btn primary-btn glow-effect">
-                            [ 🔄 REINICIAR NOVO DIAGNÓSTICO ]
-                        </button>
-                        <button id="copySummaryBtn" class="cyber-btn secondary-btn">
-                            [ 📋 COPIAR SÍNTESE EDUCATIVA ]
-                        </button>
-                        <button id="docsResultBtn" class="cyber-btn secondary-btn">
-                            [ 📜 DOCUMENTAÇÃO DO PROJETO ]
-                        </button>
+                    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12.5" aria-label="Barra de progresso">
+                        <div id="progressFill" class="progress-fill" style="width: 12.5%;"></div>
                     </div>
                 </div>
-            </div>
-        </section>
+
+                <!-- Card Principal da Situação -->
+                <div class="cyber-card scenario-card" id="scenarioCard">
+                    <div class="card-header-bar">
+                        <span class="scenario-tag" id="scenarioCategory">#REUNIÃO_DE_TECH</span>
+                        <span class="scenario-id" id="scenarioIdCode">SIM_CASE_01</span>
+                    </div>
+
+                    <div class="scenario-body">
+                        <h2 class="scenario-title" id="scenarioTitle">Ideia Desvalorizada na Reunião</h2>
+                        
+                        <div class="context-box">
+                            <span class="context-icon" aria-hidden="true">👁️‍🗨️</span>
+                            <p id="scenarioContext" class="context-text">
+                                Carregando contexto...
+                            </p>
+                        </div>
+
+                        <div class="problem-box">
+                            <span class="problem-label">FALA / ATITUDE EM FOCO:</span>
+                            <p id="scenarioSpeech" class="problem-speech">
+                                Carregando fala problemática...
+                            </p>
+                        </div>
+
+                        <div class="options-container" role="region" aria-labelledby="optionsInstruction">
+                            <p class="options-instruction" id="optionsInstruction">COMO VOCÊ REAGE OU INTERPRETA ESTA SITUAÇÃO?</p>
+                            <div id="optionsList" class="options-grid" role="group" aria-label="Alternativas da situação">
+                                <!-- Inserido dinamicamente via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Painel / Drawer de Feedback Imediato Refinado -->
+                <div id="feedbackDrawer" class="feedback-drawer hidden" aria-live="polite" tabindex="-1">
+                    <div class="feedback-content">
+                        <div class="feedback-header" id="feedbackHeader">
+                            <span id="feedbackVerdictBadge" class="verdict-badge">SISTEMA ATUALIZADO</span>
+                            <span id="feedbackConceptBadge" class="concept-badge">CONCEITO: MANSPLAINING</span>
+                        </div>
+
+                        <h3 id="feedbackTitle" class="feedback-title">Análise da Decisão</h3>
+                        <p id="feedbackText" class="feedback-description">
+                            Explicação detalhada...
+                        </p>
+
+                        <div class="concept-educational-box">
+                            <div class="concept-educational-header">
+                                <span class="concept-icon" aria-hidden="true">💡</span>
+                                <strong>ENTENDA O CONCEITO ENVOLVIDO:</strong>
+                            </div>
+                            <p id="feedbackConceptExplanation">Explicação do conceito...</p>
+                        </div>
+
+                        <div class="feedback-actions">
+                            <button id="nextScenarioBtn" class="cyber-btn next-btn">
+                                [ AVANÇAR PARA A PRÓXIMA SITUAÇÃO ➔ ]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA 3: RELATÓRIO FINAL DE CONSCIÊNCIA -->
+            <section id="resultScreen" class="screen" aria-labelledby="resultMainTitle">
+                <div class="cyber-card result-card">
+                    <div class="card-header-bar">
+                        <span class="terminal-dot red" aria-hidden="true"></span>
+                        <span class="terminal-dot yellow" aria-hidden="true"></span>
+                        <span class="terminal-dot green" aria-hidden="true"></span>
+                        <span class="card-title-code">RELATORIO_FINAL_DE_CONSCIENCIA.LOG</span>
+                    </div>
+
+                    <div class="result-body">
+                        <h2 class="result-main-title" id="resultMainTitle" tabindex="-1">DIAGNÓSTICO COMPLETO DO SISTEMA</h2>
+
+                        <!-- Indicador Circular de Consciência -->
+                        <div class="score-display-wrapper">
+                            <div class="gauge-circle" id="gaugeCircle" role="img" aria-label="Gráfico de pontuação final">
+                                <div class="gauge-inner">
+                                    <span id="finalScoreVal" class="score-number">0%</span>
+                                    <span class="score-label">CONSCIÊNCIA REAL</span>
+                                </div>
+                            </div>
+                            <div class="verdict-status-box">
+                                <h3 id="finalVerdictTitle" class="verdict-title">CLASSIFICANDO...</h3>
+                                <p id="finalVerdictSubtitle" class="verdict-subtitle">
+                                    Análise final do seu nível de percepção sobre machismo e discriminação invisível.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Frase de Impacto com Destaque Especial -->
+                        <div class="impact-quote-box">
+                            <span class="quote-icon" aria-hidden="true">“</span>
+                            <p id="impactQuote" class="quote-text">
+                                "A mudança começa quando paramos de tratar o machismo sutil como algo normal."
+                            </p>
+                            <span class="quote-icon-end" aria-hidden="true">”</span>
+                        </div>
+
+                        <!-- Resumo Elegante dos Conceitos Identificados -->
+                        <div class="concepts-summary">
+                            <h3>MAPA DE CONCEITOS ANALISADOS NESTE DIAGNÓSTICO:</h3>
+                            <div class="concepts-grid" id="conceptsGrid" role="list">
+                                <!-- Inserido dinamicamente via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Mensagem Educativa Final Construtiva -->
+                        <div class="final-educational-message">
+                            <h4>🌱 DIRETRIZES DE TRANSFORMAÇÃO NO DIA A DIA (ESTUDO & TRABALHO):</h4>
+                            <ul>
+                                <li><strong>Escute e credite:</strong> Garanta que a autoria de ideias femininas seja reconhecida publicamente sem apropriação.</li>
+                                <li><strong>Intervenha no machismo recreativo:</strong> Não normalize piadas sexistas ou comentários condescendentes sob o pretexto de "humor".</li>
+                                <li><strong>Elimine desvios de função por gênero:</strong> Alterne tarefas administrativas e de suporte de forma igual entre toda a equipe.</li>
+                                <li><strong>Avalie por competência real:</strong> Não reduza o mérito de mulheres a "cotas" ou suposições sobre vida pessoal e maternidade.</li>
+                            </ul>
+                        </div>
+
+                        <div class="result-actions">
+                            <button id="restartBtn" class="cyber-btn primary-btn glow-effect">
+                                [ 🔄 REINICIAR NOVO DIAGNÓSTICO ]
+                            </button>
+                            <button id="copySummaryBtn" class="cyber-btn secondary-btn">
+                                [ 📋 COPIAR SÍNTESE EDUCATIVA ]
+                            </button>
+                            <button id="docsResultBtn" class="cyber-btn secondary-btn">
+                                [ 📜 DOCUMENTAÇÃO DO PROJETO ]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
 
         <!-- Rodapé do Sistema -->
         <footer class="system-footer">
@@ -259,15 +270,95 @@
 
     </div>
 
+    <!-- MODAL DE ACESSIBILIDADE DO SISTEMA (NOVO) -->
+    <div id="a11yModal" class="system-modal-overlay hidden" role="dialog" aria-labelledby="a11yModalTitle" aria-modal="true">
+        <div class="cyber-card a11y-card">
+            <div class="card-header-bar">
+                <span class="terminal-dot red" aria-hidden="true"></span>
+                <span class="terminal-dot yellow" aria-hidden="true"></span>
+                <span class="terminal-dot green" aria-hidden="true"></span>
+                <span class="card-title-code" id="a11yModalTitle">SYS_CONFIG // PAINEL_DE_ACESSIBILIDADE.SYS</span>
+                <button id="closeA11yHeaderBtn" class="close-header-btn" aria-label="Fechar painel de acessibilidade" title="Fechar painel de acessibilidade">&times;</button>
+            </div>
+
+            <div class="a11y-body">
+                <div class="a11y-title-wrapper">
+                    <h2 class="a11y-main-title">CONFIGURAÇÕES DE ACESSIBILIDADE</h2>
+                    <p class="a11y-subtitle">Ajuste os parâmetros visuais e interativos para sua melhor experiência</p>
+                </div>
+
+                <div class="a11y-options-list">
+                    <!-- Opção 1: Alto Contraste -->
+                    <div class="a11y-option-item">
+                        <div class="a11y-option-info">
+                            <span class="a11y-option-name">◉ ALTO CONTRASTE</span>
+                            <span class="a11y-option-desc">Aumenta significativamente o contraste entre texto, fundos e bordas preservando as cores do sistema.</span>
+                        </div>
+                        <button id="highContrastToggle" class="a11y-toggle-btn" role="switch" aria-checked="false" aria-label="Alternar modo de alto contraste">
+                            <span class="toggle-indicator" aria-hidden="true"></span>
+                            <span class="toggle-state-text" id="highContrastStateText">DESATIVADO</span>
+                        </button>
+                    </div>
+
+                    <!-- Opção 2: Redução de Animações -->
+                    <div class="a11y-option-item">
+                        <div class="a11y-option-info">
+                            <span class="a11y-option-name">◉ REDUZIR ANIMAÇÕES</span>
+                            <span class="a11y-option-desc">Desativa efeitos de transição, brilhos e movimentos visuais (suporte nativo a prefers-reduced-motion).</span>
+                        </div>
+                        <button id="reducedMotionToggle" class="a11y-toggle-btn" role="switch" aria-checked="false" aria-label="Alternar redução de animações">
+                            <span class="toggle-indicator" aria-hidden="true"></span>
+                            <span class="toggle-state-text" id="reducedMotionStateText">DESATIVADO</span>
+                        </button>
+                    </div>
+
+                    <!-- Opção 3: Tamanho da Fonte -->
+                    <div class="a11y-option-item font-size-item">
+                        <div class="a11y-option-info">
+                            <span class="a11y-option-name">TAMANHO DO TEXTO</span>
+                            <span class="a11y-option-desc">Ajusta a escala tipográfica em toda a interface sem quebrar o layout.</span>
+                        </div>
+                        <div class="font-size-controls" role="group" aria-label="Controle de tamanho do texto">
+                            <button class="font-size-btn active" data-size="normal" aria-pressed="true" title="Tamanho normal">
+                                <strong>A−</strong> <span class="btn-subtext">Normal</span>
+                            </button>
+                            <button class="font-size-btn" data-size="large" aria-pressed="false" title="Tamanho grande">
+                                <strong>A+</strong> <span class="btn-subtext">Grande</span>
+                            </button>
+                            <button class="font-size-btn" data-size="xlarge" aria-pressed="false" title="Tamanho muito grande">
+                                <strong>A++</strong> <span class="btn-subtext">Muito Grande</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dica de Acessibilidade / Navegação por Teclado -->
+                    <div class="a11y-help-box">
+                        <div class="help-box-header">
+                            <span class="help-icon" aria-hidden="true">⌨️</span>
+                            <strong>NAVEGAÇÃO POR TECLADO & LEITORES:</strong>
+                        </div>
+                        <p>Utilize <kbd>Tab</kbd> e <kbd>Shift + Tab</kbd> para navegar entre botões e opções, <kbd>Enter</kbd> ou <kbd>Espaço</kbd> para acionar escolhas e <kbd>Esc</kbd> para fechar janelas.</p>
+                    </div>
+                </div>
+
+                <div class="a11y-actions">
+                    <button id="closeA11yBtn" class="cyber-btn primary-btn glow-effect">
+                        [ ✖ CONCLUIR E FECHAR ]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE DOCUMENTAÇÃO INTERNA DO SISTEMA -->
-    <div id="docsModal" class="docs-modal-overlay hidden" role="dialog" aria-labelledby="docsModalTitle" aria-modal="true">
+    <div id="docsModal" class="system-modal-overlay hidden" role="dialog" aria-labelledby="docsModalTitle" aria-modal="true">
         <div class="cyber-card docs-card">
             <div class="card-header-bar">
-                <span class="terminal-dot red"></span>
-                <span class="terminal-dot yellow"></span>
-                <span class="terminal-dot green"></span>
+                <span class="terminal-dot red" aria-hidden="true"></span>
+                <span class="terminal-dot yellow" aria-hidden="true"></span>
+                <span class="terminal-dot green" aria-hidden="true"></span>
                 <span class="card-title-code" id="docsModalTitle">SYS_DOC // DOCUMENTACAO_INTERNA_DO_PROJETO.SYS</span>
-                <button id="closeDocsHeaderBtn" class="close-header-btn" title="Fechar documentação">&times;</button>
+                <button id="closeDocsHeaderBtn" class="close-header-btn" aria-label="Fechar documentação" title="Fechar documentação">&times;</button>
             </div>
 
             <div class="docs-body">
@@ -281,7 +372,7 @@
                     <!-- Bloco 1: Visão Geral -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">🌐</span>
+                            <span class="doc-icon" aria-hidden="true">🌐</span>
                             <h3>Visão Geral do Projeto</h3>
                         </div>
                         <p class="doc-text">
@@ -292,7 +383,7 @@
                     <!-- Bloco 2: Tema e Justificativa -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">⚖️</span>
+                            <span class="doc-icon" aria-hidden="true">⚖️</span>
                             <h3>Tema e Justificativa</h3>
                         </div>
                         <p class="doc-text">
@@ -303,7 +394,7 @@
                     <!-- Bloco 3: Conceito Criativo -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">💡</span>
+                            <span class="doc-icon" aria-hidden="true">💡</span>
                             <h3>Conceito Criativo</h3>
                         </div>
                         <p class="doc-text">
@@ -314,7 +405,7 @@
                     <!-- Bloco 4: Funcionamento do Simulador -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">⚙️</span>
+                            <span class="doc-icon" aria-hidden="true">⚙️</span>
                             <h3>Como o Sistema Funciona</h3>
                         </div>
                         <p class="doc-text">
@@ -325,7 +416,7 @@
                     <!-- Bloco 5: Significado das Cores -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">🎨</span>
+                            <span class="doc-icon" aria-hidden="true">🎨</span>
                             <h3>Leitura do Sistema</h3>
                         </div>
                         <p class="doc-text">
@@ -336,7 +427,7 @@
                     <!-- Bloco 6: Tecnologias e Construção -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">💻</span>
+                            <span class="doc-icon" aria-hidden="true">💻</span>
                             <h3>Estrutura e Desenvolvimento</h3>
                         </div>
                         <p class="doc-text">
@@ -347,7 +438,7 @@
                     <!-- Bloco 7: Objetivo Educativo -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">🌱</span>
+                            <span class="doc-icon" aria-hidden="true">🌱</span>
                             <h3>Objetivo Educativo</h3>
                         </div>
                         <p class="doc-text">
@@ -358,7 +449,7 @@
                     <!-- Bloco 8: Público-Alvo -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">🎯</span>
+                            <span class="doc-icon" aria-hidden="true">🎯</span>
                             <h3>Público-Alvo</h3>
                         </div>
                         <p class="doc-text">
@@ -369,7 +460,7 @@
                     <!-- Bloco 9: Próximos Passos -->
                     <article class="doc-block">
                         <div class="doc-block-header">
-                            <span class="doc-icon">🚀</span>
+                            <span class="doc-icon" aria-hidden="true">🚀</span>
                             <h3>Evolução do Projeto</h3>
                         </div>
                         <p class="doc-text">
@@ -380,7 +471,7 @@
                     <!-- Bloco 10: Créditos / Equipe -->
                     <article class="doc-block full-width">
                         <div class="doc-block-header">
-                            <span class="doc-icon">👥</span>
+                            <span class="doc-icon" aria-hidden="true">👥</span>
                             <h3>Equipe e Produção</h3>
                         </div>
                         <p class="doc-text">
@@ -400,7 +491,7 @@
     </div>
 
     <!-- Notificação Toast -->
-    <div id="toast" class="toast hidden" role="status"></div>
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
     <script src="script.js"></script>
 </body>
